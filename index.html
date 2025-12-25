@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Lottery System</title>
+    <style>
+        :root {
+            --accent-green: #2e7d32;
+            --panda-black: #1a1a1a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* ဝါးတောနောက်ခံပုံ */
+            background: url('https://images.unsplash.com/photo-1534073737327-5ee77ff2f59c?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* ဇယားကို အလယ်ပို့ရန် အဓိကအပိုင်း */
+            display: flex;
+            justify-content: center; /* ဘယ်ညာအလယ် */
+            align-items: center;     /* ထက်အောက်အလယ် */
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        /* နောက်ခံကို အနည်းငယ်မှောင်စေရန် */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            text-align: center;
+            width: 100%;
+            max-width: 480px; /* ဇယားအကျယ် */
+            border-top: 8px solid var(--accent-green);
+            margin: 20px; /* Mobile မှာ ဘေးမကပ်စေရန် */
+        }
+
+        h1 {
+            color: var(--panda-black);
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 30px;
+            display: inline-block;
+            border-bottom: 3px solid var(--accent-green);
+            padding-bottom: 5px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            font-size: 20px;
+            color: #666;
+            width: 20px;
+        }
+
+        input[type="text"] {
+            width: 130px;
+            padding: 12px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            background: #fdfdfd;
+            letter-spacing: 2px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px rgba(46, 125, 50, 0.2);
+        }
+
+        .symbol {
+            font-size: 24px;
+            color: #888;
+            font-weight: bold;
+        }
+
+        .result-box {
+            width: 100px;
+            padding: 12px 0;
+            font-weight: 800;
+            border-radius: 12px;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .bg-Big { background: var(--panda-black); color: #fff; }
+        .bg-Small { background: #fff; color: var(--panda-black); border: 2px solid var(--panda-black); }
+        .bg- { background: #eee; color: #aaa; }
+
+        .btn-calc {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 25px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-calc:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .final-area {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .final-box {
+            background: var(--panda-black);
+            color: #fff;
+            font-size: 32px;
+            font-weight: 900;
+            padding: 15px 40px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 4px solid var(--accent-green);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Panda System</h1>
+        
+        <form method="POST">
+            {% for i in range(5) %}
+            <div class="row">
+                <div class="label">{{ ['i', 'ii', 'iii', 'iv', 'v'][i] }}</div>
+                <input type="text" name="lottery_input" maxlength="6" value="{{ rows[i]['input'] }}" placeholder="000000" autocomplete="off">
+                <div class="symbol">=</div>
+                <div class="result-box bg-{{ rows[i]['size'] }}">
+                    {% if rows[i]['final_digit'] is not none and rows[i]['final_digit'] != '' %}
+                        {{ rows[i]['final_digit'] }} ({{ rows[i]['size'][0] }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-calc">Calculate Result</button>
+        </form>
+
+        <div class="final-area">
+            <p style="font-size: 14px; font-weight: bold; color: #888; text-transform: uppercase;">Final Decision</p>
+            <div class="final-box">
+                {% if final_result %}{{ final_result }}{% else %}-{% endif %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
