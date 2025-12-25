@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import os
 
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ def reduce_number(n):
 def get_lottery_result(number_str):
     """တစ်တန်းချင်းစီအတွက် တွက်ချက်ခြင်း"""
     if not number_str or not number_str.isdigit() or len(number_str) != 6:
-        return None # ဂဏန်းမဟုတ်ရင် သို့မဟုတ် ၆ လုံးမပြည့်ရင် None ပြန်မယ်
+        return None 
 
     # ရှေ့ ၃ လုံး နှင့် နောက် ၃ လုံး ခွဲထုတ်ခြင်း
     front_sum = sum(int(d) for d in number_str[:3])
@@ -54,7 +55,6 @@ def index():
                 else:
                     small_count += 1
             else:
-                # အမှားပါရင် Empty row ထည့်မယ်
                 rows.append({"input": val, "size": "-", "final_digit": "-"})
 
         # Final Result တွက်ချက်ခြင်း (များရာအနိုင်ယူစနစ်)
@@ -62,14 +62,16 @@ def index():
             final_result = "Big"
         elif small_count > big_count:
             final_result = "Small"
-        else:
-            final_result = "Draw" # သရေကျခဲ့ရင် (ဂဏန်းမပြည့်တာပါခဲ့ရင် ဖြစ်နိုင်)
+        elif (big_count + small_count) > 0:
+            final_result = "Draw"
 
-    # ပထမဆုံးအကြိမ် ဖွင့်ရင် အလွတ်ပြမယ်
     if not rows:
         rows = [{"input": "", "size": "", "final_digit": ""} for _ in range(5)]
 
     return render_template('index.html', rows=rows, final_result=final_result)
 
+# --- Koyeb/Render/Hosting များအတွက် Port ချိန်ညှိခြင်း ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    # PORT environment variable ရှိရင် ယူမယ်၊ မရှိရင် 8000 ကို သုံးမယ်
+    port = int(os.environ.get('PORT', 8000))
+    app.run(host='0.0.0.0', port=port)
